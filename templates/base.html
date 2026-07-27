@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>{% block title %}{{ restaurant_name }} | Authentic Indian Cuisine in {{ restaurant_city }}{% endblock %}</title>
+<meta name="description" content="{% block description %}{{ restaurant_name }} — authentic North & South Indian cuisine in {{ restaurant_city }}. Dine-in, takeout, delivery, catering & reservations. {{ restaurant_tagline }}{% endblock %}">
+<meta name="keywords" content="Indian restaurant Jacksonville Beach, Indian food Jax Beach, butter chicken, biryani, tandoori, Indian catering Jacksonville, best Indian restaurant Florida">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0B5D3B">
+<link rel="canonical" href="{{ request.url_root }}{{ request.path[1:] }}">
+
+<!-- Open Graph -->
+<meta property="og:type" content="restaurant.restaurant">
+<meta property="og:site_name" content="{{ restaurant_name }}">
+<meta property="og:title" content="{% block og_title %}{{ restaurant_name }} | {{ restaurant_city }}{% endblock %}">
+<meta property="og:description" content="{{ restaurant_tagline }} Authentic North & South Indian cuisine in {{ restaurant_city }}.">
+<meta property="og:url" content="{{ request.url }}">
+<meta property="og:image" content="{{ url_for('static', filename='images/og-cover.jpg', _external=True) }}">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ restaurant_name }}">
+<meta name="twitter:description" content="{{ restaurant_tagline }}">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo-mark.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/logo-mark.png') }}">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+
+<!-- AOS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+<!-- Swiper -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<!-- Restaurant Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "name": "{{ restaurant_name }}",
+  "image": "{{ url_for('static', filename='images/og-cover.jpg', _external=True) }}",
+  "servesCuisine": ["Indian", "North Indian", "South Indian"],
+  "priceRange": "$$",
+  "telephone": "{{ restaurant_phone }}",
+  "email": "{{ restaurant_email }}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "1708 3rd St N",
+    "addressLocality": "Jacksonville Beach",
+    "addressRegion": "FL",
+    "postalCode": "32250",
+    "addressCountry": "US"
+  },
+  "geo": { "@type": "GeoCoordinates", "latitude": 30.3033, "longitude": -81.3976 },
+  "servesCuisine": "Indian",
+  "acceptsReservations": "True"
+}
+</script>
+{% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+<input type="hidden" name="csrf_token" id="global-csrf-token" value="{{ csrf_token() }}">
+
+<!-- Intro Curtain / Page Loader -->
+<div id="page-loader" aria-hidden="true">
+  <div class="loader-curtain loader-curtain-left"></div>
+  <div class="loader-curtain loader-curtain-right"></div>
+  <div class="loader-mark">
+    <img src="{{ url_for('static', filename='images/logo-mark.png') }}" alt="Karma" class="loader-logo-img">
+  </div>
+</div>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursor-dot"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress"><div class="scroll-progress-bar" id="scroll-progress-bar"></div></div>
+
+<!-- Header -->
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="{{ url_for('main.index') }}" class="brand magnetic">
+      <img src="{{ url_for('static', filename='images/logo-mark.png') }}" alt="Karma Indian Bistro logo" class="brand-logo-img">
+      <span class="brand-text">
+        <span class="brand-name">Karma</span>
+        <span class="brand-sub">Indian Bistro &amp; Restaurant</span>
+      </span>
+    </a>
+
+    <nav class="main-nav" id="main-nav">
+      <a href="{{ url_for('main.index') }}" class="nav-link {{ 'active' if request.endpoint=='main.index' }}">Home</a>
+      <a href="{{ url_for('main.menu') }}" class="nav-link {{ 'active' if request.endpoint=='main.menu' }}">Menu</a>
+      <a href="{{ url_for('main.about') }}" class="nav-link {{ 'active' if request.endpoint=='main.about' }}">About</a>
+      <a href="{{ url_for('main.gallery') }}" class="nav-link {{ 'active' if request.endpoint=='main.gallery' }}">Gallery</a>
+      <a href="{{ url_for('main.contact') }}" class="nav-link {{ 'active' if request.endpoint=='main.contact' }}">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+      <form class="nav-search" action="{{ url_for('main.menu') }}" method="get" role="search">
+        <input type="search" name="q" placeholder="Search the menu…" aria-label="Search menu" class="nav-search-input">
+        <button type="submit" class="nav-search-btn" aria-label="Search"><i class="bi bi-search"></i></button>
+      </form>
+
+      <button class="icon-btn" id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <i class="bi bi-moon-stars"></i>
+      </button>
+
+      <div class="profile-menu">
+        <button class="icon-btn" id="profile-toggle" aria-label="Account" title="Account">
+          <i class="bi bi-person-circle"></i>
+        </button>
+        <div class="profile-dropdown" id="profile-dropdown">
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Admin Dashboard</a>
+            <a href="{{ url_for('admin.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+          {% elif customer %}
+            <div style="padding:8px 12px;font-size:12.5px;color:var(--text-soft);">Signed in as<br><strong style="color:var(--text);">{{ customer.name }}</strong></div>
+            <a href="{{ url_for('auth.dashboard') }}"><i class="bi bi-person-lines-fill"></i> My Account</a>
+            <a href="{{ url_for('order.order_online') }}"><i class="bi bi-bag-check"></i> Order Online</a>
+            <a href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+          {% else %}
+            <a href="{{ url_for('auth.login') }}"><i class="bi bi-box-arrow-in-right"></i> Sign In</a>
+            <a href="{{ url_for('auth.register') }}"><i class="bi bi-person-plus"></i> Create Account</a>
+            <a href="{{ url_for('main.reservation') }}"><i class="bi bi-calendar-check"></i> Reservation</a>
+            <a href="{{ url_for('admin.login') }}"><i class="bi bi-shield-lock"></i> Staff Login</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <a href="{{ url_for('order.order_online') }}" class="icon-btn cart-btn" aria-label="Cart">
+        <i class="bi bi-bag"></i>
+        <span class="cart-count" id="cart-count">{{ cart_count }}</span>
+      </a>
+
+      <a href="{{ url_for('main.reservation') }}" class="btn btn-gold btn-sm nav-cta magnetic">Book a Table</a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Flash Messages -->
+<div class="flash-wrap" id="flash-wrap">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash-toast flash-{{ category }}" role="alert">
+          <span>{{ message }}</span>
+          <button class="flash-close" aria-label="Dismiss">&times;</button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
+
+<main>
+{% block content %}{% endblock %}
+</main>
+
+<!-- Newsletter -->
+<section class="newsletter-section">
+  <div class="mandala-corner mandala-corner-left" aria-hidden="true"></div>
+  <div class="container newsletter-inner" data-aos="fade-up">
+    <h3 class="script-heading">Stay in the Karma Loop</h3>
+    <p>Subscribe for exclusive offers, buffet updates and new menu launches.</p>
+    <form id="newsletter-form" class="newsletter-form">
+      <input type="email" name="email" placeholder="Enter your email address" required>
+      <button type="submit" class="btn btn-gold">Subscribe</button>
+    </form>
+    <p class="newsletter-msg" id="newsletter-msg"></p>
+  </div>
+  <div class="mandala-corner mandala-corner-right" aria-hidden="true"></div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-pattern" aria-hidden="true"></div>
+  <div class="container footer-grid">
+    <div class="footer-col">
+      <a href="{{ url_for('main.index') }}" class="brand footer-brand">
+        <img src="{{ url_for('static', filename='images/logo-mark.png') }}" alt="Karma Indian Bistro logo" class="brand-logo-img">
+        <span class="brand-text">
+          <span class="brand-name">Karma</span>
+          <span class="brand-sub">Indian Bistro &amp; Restaurant</span>
+        </span>
+      </a>
+      <p>{{ restaurant_tagline }}</p>
+      <div class="footer-social">
+        <a href="{{ social_links.facebook }}" target="_blank" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+        <a href="{{ social_links.instagram }}" target="_blank" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <a href="{{ url_for('main.menu') }}">Menu</a>
+      <a href="{{ url_for('main.about') }}">Our Story</a>
+      <a href="{{ url_for('main.gallery') }}">Gallery</a>
+      <a href="{{ url_for('main.reservation') }}">Reservations</a>
+      <a href="{{ url_for('order.order_online') }}">Order Online</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Visit Us</h4>
+      <p><i class="bi bi-geo-alt"></i> {{ restaurant_address }}</p>
+      <p><i class="bi bi-telephone"></i> <a href="tel:{{ restaurant_phone_raw }}">{{ restaurant_phone }}</a></p>
+      <p><i class="bi bi-envelope"></i> <a href="mailto:{{ restaurant_email }}">{{ restaurant_email }}</a></p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Hours</h4>
+      {% for h in restaurant_hours %}
+        <p class="hours-row"><span>{{ h.days }}</span><span>{{ h.hours }}</span></p>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; {{ current_year }} {{ restaurant_name }}. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Floating Actions -->
+<a href="https://wa.me/{{ restaurant_phone_raw|replace('+','') }}" target="_blank" rel="noopener" class="floating-btn floating-whatsapp magnetic" aria-label="WhatsApp us">
+  <i class="bi bi-whatsapp"></i>
+</a>
+<a href="tel:{{ restaurant_phone_raw }}" class="floating-btn floating-phone magnetic" aria-label="Call us">
+  <i class="bi bi-telephone-fill"></i>
+</a>
+<button class="floating-btn back-to-top magnetic" id="back-to-top" aria-label="Back to top">
+  <i class="bi bi-arrow-up"></i>
+</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

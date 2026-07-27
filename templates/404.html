@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Page Not Found | {{ restaurant_name }}{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div class="error-code">404</div>
+  <h2 style="color:#fff;">This Table Isn't Set</h2>
+  <p style="color:#e6dfc9;max-width:420px;margin:14px 0 30px;">The page you're looking for has wandered off the menu. Let's get you back to something delicious.</p>
+  <a href="{{ url_for('main.index') }}" class="btn btn-gold magnetic">Back to Home</a>
+</div>
+{% endblock %}

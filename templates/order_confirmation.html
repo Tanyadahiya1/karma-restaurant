@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed | {{ restaurant_name }}{% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="script-heading">Thank You</span>
+    <h1>Your Order is Confirmed</h1>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="form-card luxury-card text-center" data-aos="zoom-in">
+      <i class="bi bi-check-circle-fill" style="font-size:56px;color:var(--green-700);"></i>
+      <h2 class="title" style="margin-top:18px;">Order #{{ order.order_number }}</h2>
+      <p>We've received your order and our kitchen is getting started. A confirmation has been noted for
+        <strong>{{ order.customer_name }}</strong>, and a receipt has been sent to <strong>{{ order.email }}</strong>.</p>
+
+      <div class="luxury-card" style="text-align:left;padding:24px;margin-top:28px;">
+        <div class="cart-summary-row"><span>Order Type</span><span style="text-transform:capitalize;">{{ order.order_type }}</span></div>
+        <div class="cart-summary-row"><span>Items</span><span>{{ order.items_json }}</span></div>
+        <div class="cart-summary-row"><span>Payment Method</span><span>{{ order.payment_method }} <span class="status-pill {{ 'status-Confirmed' if order.payment_status=='Paid' else 'status-Pending' }}" style="margin-left:6px;">{{ order.payment_status }}</span></span></div>
+        <div class="cart-summary-row"><span>Subtotal</span><span>${{ "%.2f"|format(order.subtotal) }}</span></div>
+        {% if order.discount %}<div class="cart-summary-row"><span>Discount ({{ order.coupon_code }})</span><span>-${{ "%.2f"|format(order.discount) }}</span></div>{% endif %}
+        <div class="cart-summary-row"><span>Tax</span><span>${{ "%.2f"|format(order.tax) }}</span></div>
+        <div class="cart-summary-row total"><span>Total</span><span>${{ "%.2f"|format(order.total) }}</span></div>
+      </div>
+
+      <div class="hero-actions mt-40" style="justify-content:center;">
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline magnetic">Back to Home</a>
+        <a href="{{ url_for('order.order_online') }}" class="btn btn-gold magnetic">Order Again</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

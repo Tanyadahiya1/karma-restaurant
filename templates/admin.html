@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel | {{ restaurant_name }}{% endblock %}
+{% block body_class %}admin-body{% endblock %}
+{% block content %}
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="brand" style="margin-bottom:34px;">
+      <img src="{{ url_for('static', filename='images/logo-mark.png') }}" alt="Karma logo" class="brand-logo-img">
+      <span class="brand-text"><span class="brand-name" style="color:var(--gold-400);">Karma</span><span class="brand-sub" style="color:#cfc7b4;">Admin Panel</span></span>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if view=='dashboard' }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="{{ url_for('admin.orders') }}" class="{{ 'active' if view=='orders' }}"><i class="bi bi-bag-check"></i> Orders</a>
+    <a href="{{ url_for('admin.reservations') }}" class="{{ 'active' if view=='reservations' }}"><i class="bi bi-calendar-check"></i> Reservations</a>
+    <a href="{{ url_for('admin.messages') }}" class="{{ 'active' if view=='messages' }}"><i class="bi bi-envelope"></i> Messages</a>
+    <a href="{{ url_for('admin.newsletter') }}" class="{{ 'active' if view=='newsletter' }}"><i class="bi bi-megaphone"></i> Newsletter</a>
+    <a href="{{ url_for('admin.menu_management') }}" class="{{ 'active' if view=='menu' }}"><i class="bi bi-journal-text"></i> Menu</a>
+    <a href="{{ url_for('main.index') }}"><i class="bi bi-globe"></i> View Website</a>
+    <a href="{{ url_for('admin.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  </aside>
+
+  <main class="admin-main">
+
+    {% if view == 'dashboard' %}
+    <div class="admin-topbar"><h2 class="title">Welcome back, {{ current_user.username }}</h2></div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num">{{ stats.orders_count }}</div><div class="label">Total Orders</div></div>
+      <div class="stat-card"><div class="num">${{ "%.2f"|format(stats.revenue) }}</div><div class="label">Total Revenue</div></div>
+      <div class="stat-card"><div class="num">{{ stats.reservations_count }}</div><div class="label">Reservations</div></div>
+      <div class="stat-card"><div class="num">{{ stats.pending_reservations }}</div><div class="label">Pending Reservations</div></div>
+      <div class="stat-card"><div class="num">{{ stats.unread_messages }}</div><div class="label">Unread Messages</div></div>
+      <div class="stat-card"><div class="num">{{ stats.newsletter_count }}</div><div class="label">Newsletter Subscribers</div></div>
+      <div class="stat-card"><div class="num">{{ stats.menu_items_count }}</div><div class="label">Menu Items</div></div>
+    </div>
+
+    <div class="admin-table-wrap" style="margin-bottom:30px;">
+      <table class="admin-table">
+        <thead><tr><th>Order #</th><th>Customer</th><th>Type</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>
+        {% for o in recent_orders %}
+          <tr><td>{{ o.order_number }}</td><td>{{ o.customer_name }}</td><td style="text-transform:capitalize;">{{ o.order_type }}</td><td>${{ "%.2f"|format(o.total) }}</td><td><span class="status-pill status-{{ o.status }}">{{ o.status }}</span></td><td>{{ o.created_at.strftime('%b %d, %I:%M %p') }}</td></tr>
+        {% else %}
+          <tr><td colspan="6" class="text-center">No orders yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Name</th><th>Guests</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+        <tbody>
+        {% for r in recent_reservations %}
+          <tr><td>{{ r.name }}</td><td>{{ r.guests }}</td><td>{{ r.date }}</td><td>{{ r.time }}</td><td><span class="status-pill status-{{ r.status }}">{{ r.status }}</span></td></tr>
+        {% else %}
+          <tr><td colspan="5" class="text-center">No reservations yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% elif view == 'orders' %}
+    <div class="admin-topbar">
+      <h2 class="title">Orders</h2>
+      <div style="display:flex;gap:10px;">
+        <form class="admin-search" method="get"><input type="text" name="q" value="{{ search_query }}" placeholder="Search orders..."><button type="submit"><i class="bi bi-search"></i></button></form>
+        <a href="{{ url_for('admin.export_orders') }}" class="btn btn-outline btn-sm"><i class="bi bi-download"></i> Export CSV</a>
+      </div>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Order #</th><th>Customer</th><th>Contact</th><th>Type</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for o in orders %}
+        <tr>
+          <td>{{ o.order_number }}</td>
+          <td>{{ o.customer_name }}</td>
+          <td>{{ o.phone }}<br><small>{{ o.email }}</small></td>
+          <td style="text-transform:capitalize;">{{ o.order_type }}</td>
+          <td style="max-width:220px;">{{ o.items_json }}</td>
+          <td>${{ "%.2f"|format(o.total) }}</td>
+          <td>{{ o.payment_method }}
+            {% if o.card_last4 %}<br><small>{{ o.card_brand }} •••• {{ o.card_last4 }}</small>{% endif %}
+            <br><span class="status-pill {{ 'status-Confirmed' if o.payment_status=='Submitted' else 'status-Pending' }}">{{ o.payment_status }}</span>
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('admin.update_order_status', order_id=o.id) }}" style="display:flex;gap:6px;">
+              <select name="status" class="form-control" style="padding:6px 10px;font-size:12px;" onchange="this.form.submit()">
+                {% for s in ['Pending','Confirmed','Preparing','Out for Delivery','Delivered','Completed','Cancelled'] %}
+                <option value="{{ s }}" {{ 'selected' if o.status==s }}>{{ s }}</option>
+                {% endfor %}
+              </select>
+            </form>
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('admin.delete_order', order_id=o.id) }}" onsubmit="return confirm('Delete this order?');">
+              <button class="icon-btn" aria-label="Delete"><i class="bi bi-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" class="text-center">No orders found.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% elif view == 'reservations' %}
+    <div class="admin-topbar">
+      <h2 class="title">Reservations</h2>
+      <div style="display:flex;gap:10px;">
+        <form class="admin-search" method="get"><input type="text" name="q" value="{{ search_query }}" placeholder="Search reservations..."><button type="submit"><i class="bi bi-search"></i></button></form>
+        <a href="{{ url_for('admin.export_reservations') }}" class="btn btn-outline btn-sm"><i class="bi bi-download"></i> Export CSV</a>
+      </div>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Name</th><th>Contact</th><th>Guests</th><th>Date</th><th>Time</th><th>Requests</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for r in reservations %}
+        <tr>
+          <td>{{ r.name }}</td>
+          <td>{{ r.phone }}<br><small>{{ r.email }}</small></td>
+          <td>{{ r.guests }}</td>
+          <td>{{ r.date }}</td>
+          <td>{{ r.time }}</td>
+          <td style="max-width:200px;">{{ r.special_requests or '—' }}</td>
+          <td>
+            <form method="post" action="{{ url_for('admin.update_reservation_status', res_id=r.id) }}">
+              <select name="status" class="form-control" style="padding:6px 10px;font-size:12px;" onchange="this.form.submit()">
+                {% for s in ['Pending','Confirmed','Seated','Completed','Cancelled'] %}
+                <option value="{{ s }}" {{ 'selected' if r.status==s }}>{{ s }}</option>
+                {% endfor %}
+              </select>
+            </form>
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('admin.delete_reservation', res_id=r.id) }}" onsubmit="return confirm('Delete this reservation?');">
+              <button class="icon-btn" aria-label="Delete"><i class="bi bi-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center">No reservations found.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% elif view == 'messages' %}
+    <div class="admin-topbar"><h2 class="title">Contact Messages</h2></div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Name</th><th>Contact</th><th>Subject</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for m in messages %}
+        <tr>
+          <td>{{ m.name }}</td>
+          <td>{{ m.email }}<br><small>{{ m.phone or '' }}</small></td>
+          <td>{{ m.subject }}</td>
+          <td style="max-width:260px;">{{ m.message }}</td>
+          <td><span class="status-pill {{ 'status-Confirmed' if m.is_read else 'status-Pending' }}">{{ 'Read' if m.is_read else 'Unread' }}</span></td>
+          <td style="display:flex;gap:8px;">
+            {% if not m.is_read %}
+            <form method="post" action="{{ url_for('admin.mark_message_read', msg_id=m.id) }}"><button class="icon-btn" aria-label="Mark read"><i class="bi bi-check2"></i></button></form>
+            {% endif %}
+            <form method="post" action="{{ url_for('admin.delete_message', msg_id=m.id) }}" onsubmit="return confirm('Delete this message?');"><button class="icon-btn" aria-label="Delete"><i class="bi bi-trash"></i></button></form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center">No messages yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% elif view == 'newsletter' %}
+    <div class="admin-topbar">
+      <h2 class="title">Newsletter Subscribers</h2>
+      <a href="{{ url_for('admin.export_newsletter') }}" class="btn btn-outline btn-sm"><i class="bi bi-download"></i> Export CSV</a>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Email</th><th>Subscribed On</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for s in subscribers %}
+        <tr>
+          <td>{{ s.email }}</td>
+          <td>{{ s.created_at.strftime('%b %d, %Y') }}</td>
+          <td><form method="post" action="{{ url_for('admin.delete_subscriber', sub_id=s.id) }}" onsubmit="return confirm('Remove this subscriber?');"><button class="icon-btn" aria-label="Delete"><i class="bi bi-trash"></i></button></form></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="text-center">No subscribers yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% elif view == 'menu' %}
+    <div class="admin-topbar"><h2 class="title">Menu Management</h2></div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Veg</th><th>Available</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for item in menu_items %}
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.category }}</td>
+          <td>${{ "%.2f"|format(item.price) }}</td>
+          <td>{{ 'Veg' if item.is_veg else 'Non-Veg' }}</td>
+          <td><span class="status-pill {{ 'status-Confirmed' if item.is_available else 'status-Cancelled' }}">{{ 'Available' if item.is_available else 'Hidden' }}</span></td>
+          <td><form method="post" action="{{ url_for('admin.toggle_menu_item', item_id=item.id) }}"><button class="btn btn-outline btn-sm">{{ 'Hide' if item.is_available else 'Show' }}</button></form></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+  </main>
+</div>
+{% endblock %}

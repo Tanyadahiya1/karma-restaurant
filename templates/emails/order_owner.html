@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:30px 0;">
+    <tr><td align="center">
+      <table width="580" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #eee;">
+        <tr><td style="background:#D4AF37;padding:18px 28px;">
+          <strong style="color:#1A1712;font-size:16px;">New Order Received — Karma Indian Bistro</strong>
+        </td></tr>
+        <tr><td style="padding:28px;">
+          <table width="100%" cellpadding="6" cellspacing="0" style="font-size:14px;color:#222;border-collapse:collapse;">
+            <tr><td><strong>Order #</strong></td><td style="text-align:right;">{{ order.order_number }}</td></tr>
+            <tr><td><strong>Customer</strong></td><td style="text-align:right;">{{ order.customer_name }}</td></tr>
+            <tr><td><strong>Phone</strong></td><td style="text-align:right;">{{ order.phone }}</td></tr>
+            <tr><td><strong>Email</strong></td><td style="text-align:right;">{{ order.email }}</td></tr>
+            <tr><td><strong>Type</strong></td><td style="text-align:right;text-transform:capitalize;">{{ order.order_type }}</td></tr>
+            {% if order.address %}<tr><td><strong>Address</strong></td><td style="text-align:right;">{{ order.address }}</td></tr>{% endif %}
+            <tr><td><strong>Items</strong></td><td style="text-align:right;">{{ order.items_json }}</td></tr>
+            <tr><td><strong>Payment</strong></td><td style="text-align:right;">{{ order.payment_method }} ({{ order.payment_status }})</td></tr>
+            {% if order.notes %}<tr><td><strong>Notes</strong></td><td style="text-align:right;">{{ order.notes }}</td></tr>{% endif %}
+            <tr><td style="padding-top:14px;"><strong style="font-size:16px;">Total</strong></td><td style="text-align:right;padding-top:14px;font-size:18px;color:#0B5D3B;font-weight:bold;">${{ "%.2f"|format(order.total) }}</td></tr>
+          </table>
+          <p style="color:#888;font-size:12px;margin-top:24px;">Log in to the admin panel to update the order status.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

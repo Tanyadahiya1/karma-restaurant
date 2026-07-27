@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Gallery | {{ restaurant_name }}{% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="script-heading">Gallery</span>
+    <h1>A Feast for the Eyes</h1>
+    <p class="breadcrumb"><a href="{{ url_for('main.index') }}">Home</a> / Gallery</p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="masonry-grid" data-aos="fade-up">
+      {% set gallery_images = [
+        ("https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=700&q=80", "Restaurant interior seating"),
+        ("https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=700&q=80", "Signature curry dish"),
+        ("https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=700&q=80", "Paneer tikka appetizer"),
+        ("https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=700&q=80", "Chicken biryani"),
+        ("https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=700&q=80", "Fresh baked naan"),
+        ("https://images.unsplash.com/photo-1583394293214-28a5b0c1f8fa?w=700&q=80", "Chef preparing dishes"),
+        ("https://images.unsplash.com/photo-1601050690597-df0568f70950?w=700&q=80", "Tandoori appetizer platter"),
+        ("https://images.unsplash.com/photo-1601303516361-a5b7b4f0c6d2?w=700&q=80", "Indian dessert selection"),
+        ("https://images.unsplash.com/photo-1596797038530-2c107229654b?w=700&q=80", "Vegetable biryani"),
+        ("https://images.unsplash.com/photo-1626200926749-1633dcbdb3e6?w=700&q=80", "Mango lassi"),
+        ("https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=700&q=80", "South Indian dosa"),
+        ("https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=700&q=80", "Tandoori chicken"),
+      ] %}
+      {% for src, alt in gallery_images %}
+      <div class="masonry-item">
+        <img src="{{ src }}" alt="{{ alt }}" loading="lazy">
+        <div class="masonry-overlay">{{ alt }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" aria-label="Close">&times;</button>
+  <button class="lightbox-nav lightbox-prev" aria-label="Previous"><i class="bi bi-chevron-left"></i></button>
+  <img src="" alt="">
+  <button class="lightbox-nav lightbox-next" aria-label="Next"><i class="bi bi-chevron-right"></i></button>
+</div>
+
+{% endblock %}

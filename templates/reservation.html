@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Reservations | {{ restaurant_name }}{% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="script-heading">Book a Table</span>
+    <h1>Reserve Your Karma Experience</h1>
+    <p class="breadcrumb"><a href="{{ url_for('main.index') }}">Home</a> / Reservation</p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="form-card luxury-card" data-aos="fade-up">
+      <div class="section-head" style="margin-bottom:34px;">
+        <span class="section-tag">We'd Love to Host You</span>
+        <h2 class="title">Table Reservation</h2>
+        <p>Fill in your details and we'll confirm your reservation by phone or email.</p>
+      </div>
+
+      <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            {{ form.name(class="form-control", id="name", placeholder="Your full name") }}
+            {% for error in form.name.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            {{ form.phone(class="form-control", id="phone", placeholder="(904) 000-0000") }}
+            {% for error in form.phone.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+          <div class="form-group full">
+            <label for="email">Email Address</label>
+            {{ form.email(class="form-control", id="email", placeholder="you@example.com") }}
+            {% for error in form.email.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+          <div class="form-group">
+            <label for="guests">Number of Guests</label>
+            {{ form.guests(class="form-control", id="guests", placeholder="e.g. 4") }}
+            {% for error in form.guests.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+          <div class="form-group">
+            <label for="date">Date</label>
+            {{ form.date(class="form-control", id="date", type="date", value=today) }}
+            {% for error in form.date.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+          <div class="form-group full">
+            <label for="time">Preferred Time</label>
+            {{ form.time(class="form-control", id="time", type="time") }}
+            {% for error in form.time.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+          <div class="form-group full">
+            <label for="special_requests">Special Requests</label>
+            {{ form.special_requests(class="form-control", id="special_requests", rows="4", placeholder="Allergies, celebrations, seating preferences...") }}
+            {% for error in form.special_requests.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+          </div>
+        </div>
+        <button type="submit" class="btn btn-gold btn-block magnetic">Confirm Reservation</button>
+        <p class="form-note">Reservations are subject to availability. Large parties (10+) please call us directly at {{ restaurant_phone }}.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

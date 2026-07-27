@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Staff Login | {{ restaurant_name }}{% endblock %}
+{% block content %}
+
+<section class="login-shell">
+  <div class="login-card luxury-card" data-aos="zoom-in">
+    <img src="{{ url_for('static', filename='images/logo-mark.png') }}" alt="Karma logo" style="width:64px;margin:0 auto;">
+    <h2 class="title" style="margin:14px 0 6px;">Staff Login</h2>
+    <p style="margin-bottom:26px;">Sign in to manage orders and reservations.</p>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+        <label>Username</label>
+        {{ form.username(class="form-control", placeholder="admin") }}
+        {% for error in form.username.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        {{ form.password(class="form-control", placeholder="••••••••") }}
+        {% for error in form.password.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+      </div>
+      <button type="submit" class="btn btn-gold btn-block magnetic">Login</button>
+    </form>
+    <p class="form-note"><a href="{{ url_for('main.index') }}">&larr; Back to website</a></p>
+  </div>
+</section>
+
+{% endblock %}

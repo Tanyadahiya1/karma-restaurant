@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Contact Us | {{ restaurant_name }}{% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="script-heading">Get In Touch</span>
+    <h1>We'd Love to Hear From You</h1>
+    <p class="breadcrumb"><a href="{{ url_for('main.index') }}">Home</a> / Contact</p>
+  </div>
+</section>
+
+<section>
+  <div class="container split-section">
+    <div data-aos="fade-right">
+      <span class="section-tag">Visit or Reach Out</span>
+      <h2 class="title">Contact Information</h2>
+      <div class="feature-card luxury-card" style="text-align:left;margin-top:24px;">
+        <p><i class="bi bi-geo-alt" style="color:var(--gold-500);"></i>&nbsp; {{ restaurant_address }}</p>
+        <p><i class="bi bi-telephone" style="color:var(--gold-500);"></i>&nbsp; <a href="tel:{{ restaurant_phone_raw }}">{{ restaurant_phone }}</a></p>
+        <p><i class="bi bi-envelope" style="color:var(--gold-500);"></i>&nbsp; <a href="mailto:{{ restaurant_email }}">{{ restaurant_email }}</a></p>
+      </div>
+      <div class="luxury-card" style="margin-top:20px;padding:24px;">
+        <h4 style="margin-bottom:14px;">Business Hours</h4>
+        {% for h in restaurant_hours %}
+        <p class="hours-row" style="font-size:14px;color:var(--text);"><span>{{ h.days }}</span><span>{{ h.hours }}</span></p>
+        {% endfor %}
+      </div>
+      <div class="footer-social" style="margin-top:20px;">
+        <a href="{{ social_links.facebook }}" target="_blank" rel="noopener" style="border-color:var(--border);color:var(--text);"><i class="bi bi-facebook"></i></a>
+        <a href="{{ social_links.instagram }}" target="_blank" rel="noopener" style="border-color:var(--border);color:var(--text);"><i class="bi bi-instagram"></i></a>
+      </div>
+      <div class="luxury-card" style="margin-top:24px;overflow:hidden;">
+        <iframe
+          src="https://www.google.com/maps?q={{ restaurant_lat|default(30.3033) }},{{ restaurant_lng|default(-81.3976) }}&z=15&output=embed"
+          width="100%" height="260" style="border:0;" allowfullscreen loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade" title="Karma Indian Bistro location map"></iframe>
+      </div>
+    </div>
+
+    <div class="form-card luxury-card" data-aos="fade-left">
+      <h2 class="title" style="margin-bottom:24px;">Send a Message</h2>
+      <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+          <label>Full Name</label>
+          {{ form.name(class="form-control", placeholder="Your full name") }}
+          {% for error in form.name.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          {{ form.email(class="form-control", placeholder="you@example.com") }}
+          {% for error in form.email.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+        </div>
+        <div class="form-group">
+          <label>Phone (optional)</label>
+          {{ form.phone(class="form-control", placeholder="(904) 000-0000") }}
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          {{ form.subject(class="form-control", placeholder="Catering, feedback, general enquiry...") }}
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          {{ form.message(class="form-control", rows="5", placeholder="How can we help?") }}
+          {% for error in form.message.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+        </div>
+        <button type="submit" class="btn btn-gold btn-block magnetic">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

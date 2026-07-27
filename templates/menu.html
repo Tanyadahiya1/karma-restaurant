@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Menu | {{ restaurant_name }}{% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="script-heading">Our Menu</span>
+    <h1>North &amp; South Indian Classics</h1>
+    <p class="breadcrumb"><a href="{{ url_for('main.index') }}">Home</a> / Menu</p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <form method="get" action="{{ url_for('main.menu') }}" style="max-width:480px;margin:0 auto 34px;display:flex;gap:10px;" data-aos="fade-up">
+      <input type="search" name="q" value="{{ search_query }}" placeholder="Search dishes e.g. Butter Chicken" class="form-control" style="flex:1;">
+      <input type="hidden" name="category" value="{{ active_category }}">
+      <button type="submit" class="btn btn-green"><i class="bi bi-search"></i></button>
+    </form>
+
+    <div class="category-filter" data-aos="fade-up">
+      <a href="{{ url_for('main.menu', q=search_query) }}" class="filter-chip {{ 'active' if active_category=='All' }}">All</a>
+      {% for cat in categories %}
+      <a href="{{ url_for('main.menu', category=cat, q=search_query) }}" class="filter-chip {{ 'active' if active_category==cat }}">{{ cat }}</a>
+      {% endfor %}
+    </div>
+
+    {% if grouped_items %}
+      {% for category, items in grouped_items.items() %}
+      <div class="category-heading" data-aos="fade-up"><h3>{{ category }}</h3></div>
+      <div class="dish-grid">
+        {% for item in items %}
+        <div class="luxury-card dish-card" data-aos="fade-up" data-aos-delay="{{ (loop.index0 % 4) * 80 }}">
+          <div class="dish-media">
+            <img src="{{ item.image }}" alt="{{ item.name }}" loading="lazy">
+            {% if item.is_popular %}<span class="dish-badge">Popular</span>{% endif %}
+            <span class="veg-badge {{ '' if item.is_veg else 'non-veg' }}"></span>
+            <button class="fav-btn" aria-label="Save favorite"><i class="bi bi-heart"></i></button>
+          </div>
+          <div class="dish-body">
+            <div class="dish-top">
+              <h4>{{ item.name }}</h4>
+              <span class="dish-price">${{ "%.2f"|format(item.price) }}</span>
+            </div>
+            <p class="dish-desc">{{ item.description }}</p>
+            <div class="dish-actions">
+              <span class="spice-level">
+                {% for i in range(3) %}<i class="bi bi-fire {{ 'active' if i < item.spice_level }}"></i>{% endfor %}
+              </span>
+              <button class="add-cart-btn" data-item-id="{{ item.id }}"><i class="bi bi-bag-plus"></i> Add</button>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state" data-aos="fade-up">
+        <i class="bi bi-search" style="font-size:40px;color:var(--gold-500);"></i>
+        <h3 style="margin-top:16px;">No dishes found</h3>
+        <p>Try a different search term or browse another category.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

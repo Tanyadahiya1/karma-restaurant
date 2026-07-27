@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}About Us | {{ restaurant_name }}{% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="script-heading">Our Story</span>
+    <h1>Where Tradition Meets Table</h1>
+    <p class="breadcrumb"><a href="{{ url_for('main.index') }}">Home</a> / About</p>
+  </div>
+</section>
+
+<section>
+  <div class="container split-section">
+    <div data-aos="fade-right">
+      <span class="section-tag">Since Day One</span>
+      <h2 class="title">A Dream Born From Passion</h2>
+      <p>Karma is more than a restaurant &mdash; it's a dream born from a passion for sharing the rich culinary
+        heritage of India. Our founders, carrying generations of culinary expertise, set out to build a place
+        in Jacksonville Beach where authentic Indian flavors could be savored in a vibrant, welcoming atmosphere.</p>
+      <p>From vegetarian and halal options to street snacks, thalis and refreshing drinks, we're dedicated to
+        serving flavorful, comforting dishes that capture the true essence of Indian cuisine &mdash; the
+        philosophy of Good Food, Good Mood, Good Karma.</p>
+      <a href="{{ url_for('main.reservation') }}" class="btn btn-green magnetic">Reserve a Table</a>
+    </div>
+    <div class="split-media" data-aos="fade-left">
+      <div class="split-media-frame">
+        <img src="https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=900&q=80" alt="Karma Indian Bistro dining room" loading="lazy">
+      </div>
+      <div class="split-media-badge"><span class="big">100%</span><span class="small">Fresh Daily</span></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface);">
+  <div class="container">
+    <div class="feature-grid">
+      <div class="feature-card luxury-card" data-aos="fade-up">
+        <div class="feature-icon"><i class="bi bi-bullseye"></i></div>
+        <h4>Our Mission</h4>
+        <p>To share the true, unfiltered essence of Indian hospitality &mdash; one thoughtfully crafted dish at a time.</p>
+      </div>
+      <div class="feature-card luxury-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="feature-icon"><i class="bi bi-eye"></i></div>
+        <h4>Our Vision</h4>
+        <p>To become Jacksonville Beach's most beloved home for authentic North &amp; South Indian dining.</p>
+      </div>
+      <div class="feature-card luxury-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="feature-icon"><i class="bi bi-flower1"></i></div>
+        <h4>Fresh Ingredients</h4>
+        <p>Locally sourced produce and hand-ground spice blends define every plate we serve.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container split-section">
+    <div class="split-media" data-aos="fade-right">
+      <div class="split-media-frame">
+        <img src="https://images.unsplash.com/photo-1583394293214-28a5b0c1f8fa?w=900&q=80" alt="Karma Indian Bistro chef preparing food" loading="lazy">
+      </div>
+    </div>
+    <div data-aos="fade-left">
+      <span class="section-tag">Meet the Kitchen</span>
+      <h2 class="title">Crafted By Hands That Care</h2>
+      <p>Our kitchen team blends traditional recipes passed down through generations with a modern eye for
+        presentation. Every curry is simmered low and slow; every tandoori dish is fired to order; every
+        biryani is dum-cooked the authentic way.</p>
+      <div class="quote-block">"Good Food. Good Mood. Good Karma. That's not just our tagline &mdash; it's how we cook."</div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface);">
+  <div class="container">
+    <div class="section-head" data-aos="fade-up">
+      <span class="section-tag">Our Journey</span>
+      <h2 class="title">The Karma Timeline</h2>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card luxury-card" data-aos="fade-up">
+        <div class="feature-icon"><i class="bi bi-flag"></i></div>
+        <h4>The Beginning</h4>
+        <p>Karma opens its doors on 3rd Street North, Jacksonville Beach, bringing authentic Indian cuisine to the coast.</p>
+      </div>
+      <div class="feature-card luxury-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="feature-icon"><i class="bi bi-people"></i></div>
+        <h4>Growing Community</h4>
+        <p>A loyal local following forms around our lunch buffet, weekend specials and warm hospitality.</p>
+      </div>
+      <div class="feature-card luxury-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="feature-icon"><i class="bi bi-star"></i></div>
+        <h4>Today</h4>
+        <p>Karma continues serving Jacksonville Beach with dine-in, takeout, delivery and full-service catering.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

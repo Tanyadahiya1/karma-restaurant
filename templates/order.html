@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Order Online | {{ restaurant_name }}{% endblock %}
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="script-heading">Order Online</span>
+    <h1>{% if show_checkout %}Checkout{% elif show_cart %}Your Cart{% else %}Pickup &amp; Delivery{% endif %}</h1>
+    <p class="breadcrumb"><a href="{{ url_for('main.index') }}">Home</a> / Order Online</p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+
+    {% if show_checkout %}
+    <div class="order-layout">
+      <div class="form-card luxury-card" style="max-width:none;">
+        <h2 class="title" style="margin-bottom:24px;">Delivery &amp; Payment Details</h2>
+        <form method="post" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name</label>
+              {{ form.customer_name(class="form-control", placeholder="Your full name") }}
+              {% for error in form.customer_name.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              {{ form.phone(class="form-control", placeholder="(904) 000-0000") }}
+              {% for error in form.phone.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+            </div>
+            <div class="form-group full">
+              <label>Email Address</label>
+              {{ form.email(class="form-control", placeholder="you@example.com") }}
+              {% for error in form.email.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+            </div>
+            <div class="form-group">
+              <label>Order Type</label>
+              {{ form.order_type(class="form-control", id="order_type") }}
+            </div>
+            <div class="form-group">
+              <label>Payment Method</label>
+              {{ form.payment_method(class="form-control", id="payment_method") }}
+            </div>
+            <div class="form-group full" id="delivery-address-group">
+              <label>Delivery Address</label>
+              {{ form.address(class="form-control", rows="2", placeholder="Street, City, ZIP") }}
+              {% for error in form.address.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+            </div>
+            <div class="form-group full">
+              <label>Order Notes</label>
+              {{ form.notes(class="form-control", rows="3", placeholder="Spice preferences, allergies, etc.") }}
+            </div>
+          </div>
+
+          <div class="card-payment-panel" id="card-payment-panel" style="display:none;">
+            <div class="card-panel-head">
+              <i class="bi bi-shield-lock-fill"></i>
+              <div>
+                <h4>Secure Card Checkout via Stripe</h4>
+                <p>You'll be redirected to Stripe's encrypted payment page to enter your card details.
+                  We never see or store your card number — Stripe handles it end-to-end.</p>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-gold btn-block magnetic" id="checkout-submit-btn">Place Order &mdash; ${{ "%.2f"|format(total) }}</button>
+        </form>
+      </div>
+
+      <div class="cart-panel luxury-card">
+        <h4 style="margin-bottom:16px;">Order Summary</h4>
+        {% for row in cart_items %}
+        <div class="cart-row">
+          <div class="cart-row-info">
+            <h5>{{ row.item.name }} <span style="color:var(--text-soft);">x{{ row.qty }}</span></h5>
+          </div>
+          <strong>${{ "%.2f"|format(row.line_total) }}</strong>
+        </div>
+        {% endfor %}
+        <div class="cart-summary-row"><span>Subtotal</span><span>${{ "%.2f"|format(subtotal) }}</span></div>
+        <div class="cart-summary-row"><span>Tax</span><span>${{ "%.2f"|format(tax) }}</span></div>
+        <div class="cart-summary-row total"><span>Total</span><span>${{ "%.2f"|format(total) }}</span></div>
+      </div>
+    </div>
+
+    {% elif show_cart %}
+    <div class="order-layout">
+      <div>
+        {% if cart_items %}
+          {% for row in cart_items %}
+          <div class="luxury-card" style="display:flex;align-items:center;gap:20px;padding:18px 22px;margin-bottom:16px;">
+            <img src="{{ row.item.image }}" alt="{{ row.item.name }}" style="width:80px;height:80px;object-fit:cover;border-radius:12px;">
+            <div style="flex:1;">
+              <h4 style="font-size:16px;">{{ row.item.name }}</h4>
+              <p style="font-size:13px;">${{ "%.2f"|format(row.item.price) }} each</p>
+            </div>
+            <div class="qty-control" data-item-id="{{ row.item.id }}">
+              <button class="qty-minus" type="button">-</button>
+              <span class="qty-display">{{ row.qty }}</span>
+              <button class="qty-plus" type="button">+</button>
+            </div>
+            <strong style="min-width:70px;text-align:right;">${{ "%.2f"|format(row.line_total) }}</strong>
+            <button class="cart-remove-btn icon-btn" data-item-id="{{ row.item.id }}" aria-label="Remove"><i class="bi bi-trash"></i></button>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-bag-x" style="font-size:40px;color:var(--gold-500);"></i>
+            <h3 style="margin-top:16px;">Your cart is empty</h3>
+            <p>Browse our menu and add some delicious dishes.</p>
+            <a href="{{ url_for('order.order_online') }}" class="btn btn-green magnetic mt-40">Browse Menu</a>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if cart_items %}
+      <div class="cart-panel luxury-card">
+        <h4 style="margin-bottom:16px;">Order Summary</h4>
+        <form id="coupon-form" style="display:flex;gap:8px;margin-bottom:16px;">
+          <input type="text" name="coupon_code" placeholder="Coupon code" class="form-control" style="flex:1;">
+          <button type="submit" class="btn btn-outline btn-sm">Apply</button>
+        </form>
+        <p id="coupon-msg" style="font-size:12.5px;margin-bottom:10px;"></p>
+        <div class="cart-summary-row"><span>Subtotal</span><span>${{ "%.2f"|format(subtotal) }}</span></div>
+        <div class="cart-summary-row"><span>Discount</span><span id="summary-discount">-$0.00</span></div>
+        <div class="cart-summary-row"><span>Est. Tax</span><span id="summary-tax">${{ "%.2f"|format(subtotal * 0.075) }}</span></div>
+        <div class="cart-summary-row total"><span>Total</span><span id="summary-total">${{ "%.2f"|format(subtotal * 1.075) }}</span></div>
+        <a href="{{ url_for('order.checkout') }}" class="btn btn-gold btn-block magnetic mt-40">Proceed to Checkout</a>
+      </div>
+      {% endif %}
+    </div>
+
+    {% else %}
+    <div class="order-layout">
+      <div>
+        <div class="category-filter" data-aos="fade-up">
+          <span class="filter-chip active"><i class="bi bi-grid"></i>&nbsp; Full Menu</span>
+        </div>
+        <div class="dish-grid">
+          {% for item in items %}
+          <div class="luxury-card dish-card" data-aos="fade-up" data-aos-delay="{{ (loop.index0 % 4) * 70 }}">
+            <div class="dish-media">
+              <img src="{{ item.image }}" alt="{{ item.name }}" loading="lazy">
+              {% if item.is_popular %}<span class="dish-badge">Popular</span>{% endif %}
+              <span class="veg-badge {{ '' if item.is_veg else 'non-veg' }}"></span>
+            </div>
+            <div class="dish-body">
+              <div class="dish-top">
+                <h4>{{ item.name }}</h4>
+                <span class="dish-price">${{ "%.2f"|format(item.price) }}</span>
+              </div>
+              <p class="dish-desc">{{ item.description }}</p>
+              <div class="dish-actions">
+                <span class="spice-level">
+                  {% for i in range(3) %}<i class="bi bi-fire {{ 'active' if i < item.spice_level }}"></i>{% endfor %}
+                </span>
+                <button class="add-cart-btn" data-item-id="{{ item.id }}"><i class="bi bi-bag-plus"></i> Add</button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="cart-panel luxury-card text-center">
+        <i class="bi bi-bag-heart" style="font-size:34px;color:var(--gold-500);"></i>
+        <h4 style="margin:14px 0 8px;">Ready to Checkout?</h4>
+        <p style="font-size:13.5px;">Review your cart and complete your pickup or delivery order.</p>
+        <a href="{{ url_for('order.cart_view') }}" class="btn btn-green btn-block magnetic mt-40">View Cart</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}
