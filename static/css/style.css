@@ -461,6 +461,8 @@ table.admin-table th { background: var(--ivory-200); text-transform: uppercase; 
   .split-section { grid-template-columns: 1fr; }
   .order-layout { grid-template-columns: 1fr; }
   .cart-panel { position: static; }
+  .order-layout { grid-template-columns: 1fr; }
+  .cart-panel { position: static; order: -1; }   /* ← add order: -1 here */
   .footer-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 900px) {
