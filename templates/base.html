@@ -252,6 +252,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<!-- Fallback: hide page loader if main JS doesn't run -->
+<script>
+  (function(){
+    function ensureLoaded() {
+      try {
+        if (!document.body.classList.contains('loaded')) {
+          document.body.classList.add('loaded');
+          console && console.info && console.info('Fallback: added body.loaded to hide page loader');
+        }
+      } catch (e) {
+        /* ignore */
+      }
+    }
+
+    // If window.load fired already, ensure loaded immediately
+    if (document.readyState === 'complete') {
+      ensureLoaded();
+    } else {
+      // Prefer load event
+      window.addEventListener('load', function () { ensureLoaded(); });
+      // Safety fallback if load never fires
+      setTimeout(ensureLoaded, 3000);
+    }
+  })();
+</script>
 {% block extra_scripts %}{% endblock %}
 </body>
 </html>
