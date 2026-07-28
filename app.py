@@ -56,13 +56,22 @@ def create_app(config_name=None):
             "customer": customer,
         }
 
+    @app.teardown_request
+    def cleanup_db_session(exception=None):
+        if exception is not None:
+            db.session.rollback()
+
     @app.errorhandler(404)
     def not_found(e):
         return render_template("404.html"), 404
 
     @app.errorhandler(500)
     def server_error(e):
-        return render_template("500.html"), 500
+        db.session.rollback()
+        try:
+            return render_template("500.html"), 500
+        except Exception:
+            return "Something went wrong on our end. Please try again shortly.", 500
 
     @app.after_request
     def add_security_headers(response):
@@ -81,20 +90,28 @@ def create_app(config_name=None):
 def _seed_database(app):
     """Populate the database with the initial menu catalog and a default admin user."""
     if MenuItem.query.first() is None:
-        for item in get_menu_items_with_slugs():
-            db.session.add(MenuItem(**item))
-        db.session.commit()
-        app.logger.info("Seeded menu items.")
+        try:
+            for item in get_menu_items_with_slugs():
+                db.session.add(MenuItem(**item))
+            db.session.commit()
+            app.logger.info("Seeded menu items.")
+        except Exception as exc:
+            db.session.rollback()
+            app.logger.warning("Menu seed skipped (likely already seeded by another worker): %s", exc)
 
     if AdminUser.query.first() is None:
-        admin = AdminUser(
-            username=app.config["ADMIN_DEFAULT_USERNAME"],
-            email=app.config["RESTAURANT_EMAIL"],
-        )
-        admin.set_password(app.config["ADMIN_DEFAULT_PASSWORD"])
-        db.session.add(admin)
-        db.session.commit()
-        app.logger.info("Created default admin user.")
+        try:
+            admin = AdminUser(
+                username=app.config["ADMIN_DEFAULT_USERNAME"],
+                email=app.config["RESTAURANT_EMAIL"],
+            )
+            admin.set_password(app.config["ADMIN_DEFAULT_PASSWORD"])
+            db.session.add(admin)
+            db.session.commit()
+            app.logger.info("Created default admin user.")
+        except Exception as exc:
+            db.session.rollback()
+            app.logger.warning("Admin seed skipped (likely already seeded by another worker): %s", exc)
 
 
 app = create_app()

@@ -6,7 +6,7 @@ MENU_ITEMS = [
     # Appetizers
     dict(name="Samosa Chaat", category="Appetizers", price=8.99, is_veg=True, spice_level=1,
          description="Crispy samosas topped with chickpeas, tangy tamarind and mint chutney, yogurt and pomegranate.",
-         image="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800&q=80", is_popular=True),
+         image="https://images.unsplash.com/photo-1767469576715-a4eb8bcfa204?w=800&q=80", is_popular=True),
     dict(name="Paneer Tikka", category="Appetizers", price=11.99, is_veg=True, spice_level=2,
          description="Chunks of cottage cheese marinated in yogurt and spices, char-grilled in the tandoor.",
          image="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&q=80", is_popular=True),
