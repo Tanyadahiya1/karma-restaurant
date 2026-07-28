@@ -72,7 +72,7 @@
 {% block extra_head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
-<input type="hidden" name="csrf_token" id="global-csrf-token" value="{{ csrf_token() }}">
+<input type="hidden" id="global-csrf-token">
 
 <!-- Intro Curtain / Page Loader -->
 <div id="page-loader" aria-hidden="true">
