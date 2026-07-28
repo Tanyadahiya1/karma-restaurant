@@ -174,3 +174,9 @@
 </section>
 
 {% endblock %}
+{% if not show_checkout and cart_items %}
+<a href="{{ url_for('order.checkout') }}" class="floating-checkout-btn">
+    <i class="bi bi-bag-check"></i>
+    Checkout
+</a>
+{% endif %}

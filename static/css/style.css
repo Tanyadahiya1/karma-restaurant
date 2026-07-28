@@ -519,3 +519,24 @@ table.admin-table th { background: var(--ivory-200); text-transform: uppercase; 
 [data-tilt] { transform-style: preserve-3d; }
 .split-text span { display: inline-block; opacity: 0; transform: translateY(40px); animation: reveal-word .6s forwards; }
 @keyframes reveal-word { to { opacity: 1; transform: translateY(0); } }
+.floating-checkout-btn{
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    z-index:9999;
+
+    background:#c79a3b;
+    color:#fff;
+    padding:16px 28px;
+
+    border-radius:50px;
+    text-decoration:none;
+    font-weight:700;
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+
+    transition:.3s;
+}
+
+.floating-checkout-btn:hover{
+    transform:translateY(-3px);
+}
