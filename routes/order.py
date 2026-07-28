@@ -3,7 +3,6 @@ import string
 
 import stripe
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session, current_app
-from sqlalchemy.exc import IntegrityError
 
 from extensions import csrf
 from models import db, MenuItem, Order

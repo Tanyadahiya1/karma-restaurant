@@ -119,28 +119,3 @@ app = create_app()
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=app.config.get("DEBUG", False))
-from datetime import datetime
-
-@app.context_processor
-def inject_globals():
-    return {
-        "restaurant_name": "Karma Indian Bistro",
-        "restaurant_city": "Jacksonville",
-        "restaurant_tagline": "Authentic North & South Indian Cuisine",
-        "restaurant_phone": "+1 (904) XXX-XXXX",
-        "restaurant_phone_raw": "1904XXXXXXX",
-        "restaurant_email": "info@karmaindian.com",
-        "restaurant_address": "1708 3rd St N, Jacksonville Beach, FL",
-        "restaurant_hours": [
-            {"days": "Mon - Thu", "hours": "11:00 AM - 9:30 PM"},
-            {"days": "Fri - Sat", "hours": "11:00 AM - 10:30 PM"},
-            {"days": "Sunday", "hours": "11:00 AM - 9:00 PM"},
-        ],
-        "social_links": {
-            "facebook": "#",
-            "instagram": "#"
-        },
-        "cart_count": 0,
-        "customer": None,
-        "current_year": datetime.now().year
-    }
